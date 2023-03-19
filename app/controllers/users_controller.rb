@@ -57,6 +57,13 @@ class UsersController < ApplicationController
     end
   end
 
+  def download
+    db = Sequel.connect(connection_info)
+    sql = "SELECT * FROM USERS"
+    result = db[sql].all
+    # to_jsonしてjsonでクライアントに戻す
+  end
+
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_user
