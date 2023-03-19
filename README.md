@@ -1,24 +1,46 @@
-# README
+# 作り方
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+```
+rails new sequel_sample -d postgresql
+cd sequel_sample
+rails db:create; rails db:migrate
+git add .
+git commit -m "First commit"
 
-Things you may want to cover:
+rails g scaffold user name
+rails db:migrate
+git add .
+git commit -m "Add user model"
 
-* Ruby version
+bundle add sequel
+```
 
-* System dependencies
+```
+vim config/initializers/sequel.rb
+db_config = Rails.configuration.database_configuration
 
-* Configuration
+adapter = db_config[Rails.env]["adapter"]
+database = db_config[Rails.env]["database"]
 
-* Database creation
+Rails.application.config.sequel_db_connection_info = {
+  adapter: adapter,
+  database: database
+}
+```
 
-* Database initialization
+```
+vim app/controllers/application_controller.rb
+def connection_info
+  Rails.application.config.sequel_db_connection_info
+end
+```
 
-* How to run the test suite
-
-* Services (job queues, cache servers, search engines, etc.)
-
-* Deployment instructions
-
-* ...
+```
+vim app/controllers/users_controller.rb
+def download
+  db = Sequel.connect(connection_info)
+  sql = "SELECT * FROM USERS"
+  result = db[sql].all
+  # to_jsonしてjsonでクライアントに戻す
+end
+```
