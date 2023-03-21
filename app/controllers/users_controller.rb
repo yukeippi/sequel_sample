@@ -61,6 +61,17 @@ class UsersController < ApplicationController
     db = Sequel.connect(connection_info)
     sql = "SELECT * FROM USERS"
     result = db[sql].all
+
+    data = []
+    result.each do |row|
+      data.push(row.values)
+    end
+
+    # 項目をダブルクォーテーションでラップしたい
+    data = [["1", 'yuich"iro'], ["2", "Tomi,oto"]]
+    # ラップはjsで行う必要がある。
+
+    render json: {filename: "test", data: data}
     # to_jsonしてjsonでクライアントに戻す
   end
 
